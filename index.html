@@ -37,14 +37,15 @@
   function autoOpen() {
     // ------------------ ANDROID ------------------
     if (isAndroid()) {
-      // Intent URL: tự mở app, nếu không có thì tự động fallback
-      const pathAfterScheme = CUSTOM_SCHEME.replace(/^[a-zA-Z0-9+\-.]+:\/\//, "");
-      const intentURL = "intent://" + pathAfterScheme +
-        "#Intent;scheme=" + CUSTOM_SCHEME.split(":")[0] +
-        ";package=" + ANDROID_PACKAGE +
-        ";S.browser_fallback_url=" + encodeURIComponent(PLAY_STORE_FALLBACK) +
-        ";end";
-
+      // Tạo intent URL chuẩn để mở app
+      const intentURL =
+        "intent://#Intent"
+        + ";scheme=laostravel"
+        + ";package=com.utravel"
+        + ";S.browser_fallback_url=" + encodeURIComponent(PLAY_STORE_FALLBACK)
+        + ";end";
+    
+      // Điều hướng để mở app
       window.location.href = intentURL;
       return;
     }
