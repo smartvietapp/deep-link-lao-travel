@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đang mở ứng dụng...</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, Roboto; 
+      padding: 30px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>Đang mở ứng dụng...</h2>
+  <p>Nếu app không có, bạn sẽ được chuyển đến cửa hàng tương ứng.</p>
+
+<script>
+  // ======= THAY GIÁ TRỊ NÀY BẰNG APP CỦA BẠN =======
+  const UNIVERSAL_LINK = "https://example.com/open/some/path";
+  const CUSTOM_SCHEME = "laostravel://app";
+  const ANDROID_PACKAGE = "com.utravel";
+  const IOS_APP_ID = "6747742771";
+  const PLAY_STORE_FALLBACK = "https://play.google.com/store/apps/details?id=" + ANDROID_PACKAGE;
+  const FALLBACK_WEB = "https://example.com/landing";
+  // ==================================================
+
+  function isAndroid() { return /Android/i.test(navigator.userAgent); }
+  function isIOS() { return /iPhone|iPad|iPod/i.test(navigator.userAgent); }
+
+  let pageHidden = false;
+  document.addEventListener("visibilitychange", () => {
+    pageHidden = document.visibilityState === "hidden";
+  });
+
+  function autoOpen() {
+    // ------------------ ANDROID ------------------
+    if (isAndroid()) {
+      // Intent URL: tự mở app, nếu không có thì tự động fallback
+      const pathAfterScheme = CUSTOM_SCHEME.replace(/^[a-zA-Z0-9+\-.]+:\/\//, "");
+      const intentURL = "intent://" + pathAfterScheme +
+        "#Intent;scheme=" + CUSTOM_SCHEME.split(":")[0] +
+        ";package=" + ANDROID_PACKAGE +
+        ";S.browser_fallback_url=" + encodeURIComponent(PLAY_STORE_FALLBACK) +
+        ";end";
+
+      window.location.href = intentURL;
+      return;
+    }
+
+    // ------------------ iOS ------------------
+    if (isIOS()) {
+      // Thử mở Universal Link trước
+      // if (UNIVERSAL_LINK) {
+      //   window.location.href = UNIVERSAL_LINK;
+
+      //   setTimeout(() => {
+      //     if (!pageHidden) {
+      //       // fallback sang custom scheme
+      //       window.location.href = CUSTOM_SCHEME;
+
+      //       setTimeout(() => {
+      //         if (!pageHidden) {
+      //           // fallback cuối cùng -> App Store
+      //           window.location.href = "https://apps.apple.com/app/id" + IOS_APP_ID;
+      //         }
+      //       }, 1200);
+
+      //     }
+      //   }, 900);
+
+      //   return;
+      // }
+
+      // Không có universal link → dùng custom scheme
+      window.location.href = CUSTOM_SCHEME;
+
+      setTimeout(() => {
+        if (!pageHidden) {
+          window.location.href = "https://apps.apple.com/app/id" + IOS_APP_ID;
+        }
+      }, 1200);
+
+      return;
+    }
+
+    // ------------------ DESKTOP / KHÔNG XÁC ĐỊNH ------------------
+    window.location.href = FALLBACK_WEB || UNIVERSAL_LINK;
+  }
+
+  // Tự động mở sau khi trang tải xong (delay nhỏ để iOS xử lý)
+  window.addEventListener("load", () => setTimeout(autoOpen, 300));
+</script>
+</body>
+</html>
