@@ -37,15 +37,19 @@
   function autoOpen() {
     // ------------------ ANDROID ------------------
     if (isAndroid()) {
-      // Tạo intent URL chuẩn để mở app
+      // ---- TÁCH PATH SAU SCHEME ----
+      const pathAfterScheme = CUSTOM_SCHEME.replace(/^.*:\/\//, ""); 
+      // -> "app"
+
+      // ---- TẠO INTENT URL CHUẨN ----
       const intentURL =
-        "intent://#Intent"
-        + ";scheme=laostravel"
-        + ";package=com.utravel"
-        + ";S.browser_fallback_url=" + encodeURIComponent(PLAY_STORE_FALLBACK)
-        + ";end";
-    
-      // Điều hướng để mở app
+        "intent://" + pathAfterScheme +
+        "#Intent;scheme=laostravel" +        // KHỚP SCHEME
+        ";package=" + ANDROID_PACKAGE +
+        ";S.browser_fallback_url=" + encodeURIComponent(PLAY_STORE_FALLBACK) +
+        ";end";
+
+      console.log("INTENT URL:", intentURL);
       window.location.href = intentURL;
       return;
     }
